@@ -7,7 +7,7 @@ from gevent import socket
 from gevent import event
 
 rev=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-rev.bind(('',53))
+rev.bind(('',1053))
 ip=[]
 cur=0
 
