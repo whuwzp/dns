@@ -1,0 +1,5 @@
+#! /bin/sh
+echo "mininet start..."
+sudo mn --custom s4.py --topo mytopo --mac
+chmod 777 ovs
+
