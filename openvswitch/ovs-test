@@ -1,0 +1,14 @@
+#! /bin/sh
+echo "start..."
+
+
+ovs-ofctl add-flow s2 in_port=1,actions=output:controller
+ovs-ofctl add-flow s2 in_port=2,actions=output:1
+ovs-ofctl add-flow s3 in_port=1,actions=output:controller
+ovs-ofctl add-flow s3 in_port=2,actions=output:1
+ovs-ofctl add-flow s4 in_port=1,actions=output:controller
+ovs-ofctl add-flow s4 in_port=2,actions=output:1
+
+
+chmod 777 ovs
+
