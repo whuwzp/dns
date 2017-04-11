@@ -16,6 +16,7 @@
 """
 An OpenFlow 1.0 L2 learning switch implementation.
 """
+# coding:utf-8
 import time
 from ryu.base import app_manager
 from ryu.controller import ofp_event
@@ -27,6 +28,10 @@ from ryu.lib.packet import packet
 from ryu.lib.packet import ethernet
 from ryu.lib.packet import ether_types
 from ryu.lib.packet import ipv4
+from ryu.lib.packet import udp
+import socket
+import struct
+
 
 class SimpleSwitch(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_0.OFP_VERSION]
@@ -59,13 +64,10 @@ class SimpleSwitch(app_manager.RyuApp):
         pkt = packet.Packet(msg.data)
         eth = pkt.get_protocol(ethernet.ethernet)
 
+
         if eth.ethertype == ether_types.ETH_TYPE_LLDP:
             # ignore lldp packet
             return
-
-
-
-
 
         # add flow
         if datapath.id == 1:
@@ -82,26 +84,36 @@ class SimpleSwitch(app_manager.RyuApp):
                 self.add_flow(datapath, 4, actions)
 
                 self.flag = 1
-
-
         else:
 
             if  msg.in_port == 1:
-                print "sel.datapath", self.datapath
-
+                #hehe
                 datapath = self.datapath
+                actions = [datapath.ofproto_parser.OFPActionOutput(1)]
 
-                actions = [datapath.ofproto_parser.OFPActionOutput(1) ]
                 data = None
                 if msg.buffer_id == ofproto.OFP_NO_BUFFER:
                     data = msg.data
 
-                print data,msg.buffer_id
-
+                if data != None:
+                    resp_data = data[42:]
+                    if len(resp_data) >= 12:
+                        (resp_request_id, resp_flag, resp_qdcount, resp_ancount, resp_nscount, resp_arcount) = struct.unpack(
+                            "!HHHHHH",
+                            resp_data[:12])
+                        print "id is ",resp_request_id
+                        #DNS header = 12
+                        record = resp_data[12:]
+                        # 3www.6whuwzp.2cn0(11+4) + 2 + 2 = 19
+                        record = record[19:]
+                        if len(record) >= struct.calcsize("!HHHLHBBBB"):
+                            (offset, type, rdclass, ttl, rdlen, ip1, ip2, ip3, ip4) = struct.unpack("!HHHLHBBBB",record[:struct.calcsize("!HHHLHBBBB")])
+                            print "{0}.{1}.{2}.{3}".format(ip1, ip2, ip3, ip4)
                 out = datapath.ofproto_parser.OFPPacketOut(
                         datapath= datapath, buffer_id=msg.buffer_id, in_port=2,
                         actions=actions, data=data)
                 datapath.send_msg(out)
+
 
 
                 # print "get it"

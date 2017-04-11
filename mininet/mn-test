@@ -1,0 +1,5 @@
+#! /bin/sh
+echo "mininet start..."
+sudo mn --custom s4.py --topo mytopo --controller=remote,ip=127.0.0.1,port=6633  --mac
+chmod 777 ovs
+
