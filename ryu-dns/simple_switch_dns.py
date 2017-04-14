@@ -72,26 +72,26 @@ class SimpleSwitch(app_manager.RyuApp):
             self.datapath = datapath
 
             if self.flag == 0:
-                actions = [datapath.ofproto_parser.OFPActionOutput(2), datapath.ofproto_parser.OFPActionOutput(3), datapath.ofproto_parser.OFPActionOutput(4) ]
+                actions = [datapath.ofproto_parser.OFPActionOutput(1), datapath.ofproto_parser.OFPActionOutput(2), datapath.ofproto_parser.OFPActionOutput(3) ]
                 data = None
-                self.add_flow(datapath, 1,  actions)
+                self.add_flow(datapath, 4,  actions)
 
-                actions = [datapath.ofproto_parser.OFPActionOutput(1)]
+                actions = [datapath.ofproto_parser.OFPActionOutput(4)]
+                self.add_flow(datapath, 1, actions)
                 self.add_flow(datapath, 2, actions)
                 self.add_flow(datapath, 3, actions)
-                self.add_flow(datapath, 4, actions)
 
                 self.flag = 1
 
 
         else:
 
-            if  msg.in_port == 1:
+            if  msg.in_port == 2:
                 print "sel.datapath", self.datapath
 
                 datapath = self.datapath
 
-                actions = [datapath.ofproto_parser.OFPActionOutput(1) ]
+                actions = [datapath.ofproto_parser.OFPActionOutput(4) ]
                 data = None
                 if msg.buffer_id == ofproto.OFP_NO_BUFFER:
                     data = msg.data
@@ -99,7 +99,7 @@ class SimpleSwitch(app_manager.RyuApp):
                 print data,msg.buffer_id
 
                 out = datapath.ofproto_parser.OFPPacketOut(
-                        datapath= datapath, buffer_id=msg.buffer_id, in_port=2,
+                        datapath= datapath, buffer_id=msg.buffer_id, in_port=1,
                         actions=actions, data=data)
                 datapath.send_msg(out)
 
