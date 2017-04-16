@@ -39,6 +39,7 @@ class SimpleSwitch(app_manager.RyuApp):
         self.mac_to_port = {}
         self.datapath = None
         self.flag = 0
+        self.reply = {}
         self.init_time = time.time()
 
     def add_flow(self, datapath, in_port,  actions):
@@ -56,8 +57,10 @@ class SimpleSwitch(app_manager.RyuApp):
 
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
     def _packet_in_handler(self, ev):
+
         msg = ev.msg
         datapath = msg.datapath
+        print "packet-in from : ",datapath.id
         ofproto = datapath.ofproto
         pkt = packet.Packet(msg.data)
         eth = pkt.get_protocol(ethernet.ethernet)
@@ -74,8 +77,11 @@ class SimpleSwitch(app_manager.RyuApp):
         if datapath.id == 4:
             self.datapath = datapath
 
+            # out_port = ofproto.OFPP_FLOOD
+
             if self.flag == 0:
                 actions = [datapath.ofproto_parser.OFPActionOutput(1), datapath.ofproto_parser.OFPActionOutput(2), datapath.ofproto_parser.OFPActionOutput(3) ]
+                # actions = [datapath.ofproto_parser.OFPActionOutput(out_port)]
                 data = None
                 self.add_flow(datapath, 4,  actions)
 
@@ -90,7 +96,11 @@ class SimpleSwitch(app_manager.RyuApp):
         else:
 
             if  msg.in_port == 2:
-                # hehe
+
+
+                datapath_id = datapath.id
+
+                ## hehe
                 datapath = self.datapath
                 actions = [datapath.ofproto_parser.OFPActionOutput(4)]
 
@@ -108,7 +118,7 @@ class SimpleSwitch(app_manager.RyuApp):
                         print "id is ", resp_request_id
                         # DNS header = 12
                         record = resp_data[12:]
-                        # 3www.6whuwzp.2cn0(11+4) + 2 + 2 = 19
+                        # 3www.6whuwzp.2cn0(11+4) + 2 + 2 = 19 -> www.example.com 21
                         record = record[21:]
                         if len(record) >= struct.calcsize("!HHHLHBBBB"):
                             (offset, type, rdclass, ttl, rdlen, ip1, ip2, ip3, ip4) = struct.unpack("!HHHLHBBBB",
@@ -116,10 +126,30 @@ class SimpleSwitch(app_manager.RyuApp):
                                                                                                     :struct.calcsize(
                                                                                                         "!HHHLHBBBB")])
                             print "{0}.{1}.{2}.{3}".format(ip1, ip2, ip3, ip4)
-                out = datapath.ofproto_parser.OFPPacketOut(
-                    datapath=datapath, buffer_id=msg.buffer_id, in_port=1,
-                    actions=actions, data=data)
-                datapath.send_msg(out)
+
+                            if resp_request_id not in self.reply.keys():
+                                self.reply[resp_request_id] = {datapath_id : ip1 + ip2 + ip3 + ip4}
+                            else:
+                                self.reply[resp_request_id][datapath_id] = ip1 + ip2 + ip3 + ip4
+
+
+                        # defualt the dns1 to be attacked
+                        if len(self.reply[resp_request_id]) == 3 :
+                            if self.reply[resp_request_id][2] == self.reply[resp_request_id][3]:
+                                out = datapath.ofproto_parser.OFPPacketOut(
+                                    datapath=datapath, buffer_id=msg.buffer_id, in_port=1,
+                                    actions=actions, data=data)
+                                datapath.send_msg(out)
+
+
+
+
+
+
+                # out = datapath.ofproto_parser.OFPPacketOut(
+                #     datapath=datapath, buffer_id=msg.buffer_id, in_port=1,
+                #     actions=actions, data=data)
+                # datapath.send_msg(out)
 
                 # print "get it"
 
