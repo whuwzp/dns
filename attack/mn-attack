@@ -1,0 +1,4 @@
+#! /bin/sh
+echo "mininet start..."
+sudo mn --custom s4-attack.py --topo mytopo --controller=remote,ip=192.168.108.5,port=6633  --mac
+chmod 777 mn-attack

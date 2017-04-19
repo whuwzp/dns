@@ -1,0 +1,7 @@
+#! /bin/sh
+echo "start..."
+
+ovs-vsctl add-port s0 vboxnet0
+
+chmod 777 ovs-attack
+
