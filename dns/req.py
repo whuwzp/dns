@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 import dns.resolver
 import time
+domain = 'www.example.com'
 while True:
-    domain = raw_input('Please input an domain: ')
+    # domain = raw_input('Please input an domain: ')
     t1 = time.time()
     print t1   
     A = dns.resolver.query(domain, 'A')  
