@@ -18,9 +18,9 @@ class MyTopo( Topo ):
 
         # add links
 
-        self.addLink(s0,s1 ,delay='5ms')
-        self.addLink(s0,s2 ,delay='5ms')
-        self.addLink(s0,s3 ,delay='5ms')
+        self.addLink(s0,s1  )
+        self.addLink(s0,s2  )
+        self.addLink(s0,s3  )
 
 
 

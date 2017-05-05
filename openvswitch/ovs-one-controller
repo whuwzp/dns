@@ -16,7 +16,7 @@ ovs-ofctl add-flow s1 in_port=1,actions=output:2
 # out
 ovs-ofctl add-flow s0 in_port=4,actions=output:1
 
-ovs-ofctl add-flow s1 in_port=2,actions=output:1
+ovs-ofctl add-flow s1 in_port=2,actions=output:controller
 
-chmod 777 ovs-no-controller
+chmod 777 ovs-one
 
