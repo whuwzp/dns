@@ -1,4 +1,4 @@
 #! /bin/sh
 echo "mininet start..."
-sudo mn --custom test-for-delay.py --topo mytopo --controller=remote,ip=192.168.108.5,port=6633  --mac
+sudo mn --custom test-for-delay.py --topo mytopo --controller=remote,ip=192.168.108.5,port=7733 --mac
 chmod 777 mn-for-delay

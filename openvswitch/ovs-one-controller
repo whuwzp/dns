@@ -1,10 +1,10 @@
 #! /bin/sh
 echo "start..."
 
-ovs-vsctl add-port s0 vboxnet0
-ovs-vsctl add-port s1 vboxnet1
-ovs-vsctl add-port s2 vboxnet2
-ovs-vsctl add-port s3 vboxnet3
+ovs-vsctl add-port s0 vmnet0
+ovs-vsctl add-port s1 vmnet1
+ovs-vsctl add-port s2 vmnet2
+ovs-vsctl add-port s3 vmnet3
 
 # in
 

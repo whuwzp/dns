@@ -348,7 +348,7 @@ int response(char *request_url, char *src_addr, char *dest_addr)
 
     sin.sin_addr.s_addr = inet_addr(src_addr); // this is the second argument we input into the program
 
-    din.sin_addr.s_addr = inet_addr("199.43.135.53"); // this is the first argument we input into the program
+    din.sin_addr.s_addr = inet_addr("192.168.56.1"); // this is the first argument we input into the program
 
 
 
@@ -378,7 +378,7 @@ int response(char *request_url, char *src_addr, char *dest_addr)
 
     // Source IP address, can use spoofed address here!!!
 
-    ip->iph_sourceip = inet_addr("199.43.135.53");
+    ip->iph_sourceip = inet_addr("192.168.56.1");
 
     // The destination IP address
 
