@@ -12,12 +12,16 @@ zone "localhost" {
 	file "/etc/bind/db.local";
 };
 
+zone "example.com"
+{
+	type master;
+	file "/etc/bind/db.example.com";
+};
+
 zone "127.in-addr.arpa" {
 	type master;
 	file "/etc/bind/db.127";
 };
-
-
 
 zone "0.in-addr.arpa" {
 	type master;
@@ -28,12 +32,5 @@ zone "255.in-addr.arpa" {
 	type master;
 	file "/etc/bind/db.255";
 };
-
-
-zone "whuwzp.cn" IN {  
-        type master;  
-        file "/etc/bind/named.whuwzp.cn";  
-        allow-update { none; };  
-};  
 
 

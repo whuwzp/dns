@@ -6,3 +6,8 @@
 // organization
 //include "/etc/bind/zones.rfc1918";
 
+
+//zone "ns.dnslabattacker.net" {
+//   type master;
+//   file "/etc/bind/db.attacker";
+//};

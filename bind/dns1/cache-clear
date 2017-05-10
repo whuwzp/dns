@@ -1,0 +1,9 @@
+#! /bin/sh
+echo "start to clear cache"
+
+sudo rndc flush
+sudo rndc dumpdb -cache
+sudo service bind9 restart
+
+chmod 777 cache-clear
+

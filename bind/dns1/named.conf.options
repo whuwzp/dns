@@ -17,10 +17,10 @@ options {
 	// forward only;
 	
 	recursion yes;
-	forwarders {
-	 	192.168.56.101;
-	};
-
+	//forwarders {
+	// 	8.8.8.8;
+	//};
+	query-source port 33333;
 	//========================================================================
 	// If BIND logs error messages about the root key being expired,
 	// you will need to update your keys.  See https://www.isc.org/bind-keys

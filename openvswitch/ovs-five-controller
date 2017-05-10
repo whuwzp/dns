@@ -6,12 +6,19 @@ ovs-vsctl add-port s1 vmnet1
 ovs-vsctl add-port s2 vmnet2
 ovs-vsctl add-port s3 vmnet3
 
+ovs-vsctl add-port s4 vmnet4
+ovs-vsctl add-port s5 vmnet5
+
 # in
 ovs-ofctl add-flow s1 in_port=1,actions=output:2
 
 ovs-ofctl add-flow s2 in_port=1,actions=mod_nw_dst:192.168.56.102,mod_dl_dst:00:00:00:00:00:0b,output:2
 
 ovs-ofctl add-flow s3 in_port=1,actions=mod_nw_dst:192.168.56.103,mod_dl_dst:00:00:00:00:00:0c,output:2
+
+ovs-ofctl add-flow s4 in_port=1,actions=mod_nw_dst:192.168.56.104,mod_dl_dst:00:00:00:00:00:0d,output:2
+
+ovs-ofctl add-flow s5 in_port=1,actions=mod_nw_dst:192.168.56.105,mod_dl_dst:00:00:00:00:00:0e,output:2
 
 # out
 ovs-ofctl add-flow s1 in_port=2,actions=output:controller
@@ -20,5 +27,9 @@ ovs-ofctl add-flow s2 in_port=2,actions=mod_nw_src:192.168.56.101,mod_dl_src:00:
 
 ovs-ofctl add-flow s3 in_port=2,actions=mod_nw_src:192.168.56.101,mod_dl_src:00:00:00:00:00:0a,output:controller
 
-chmod 777 ovs-three-controller
+ovs-ofctl add-flow s4 in_port=2,actions=mod_nw_src:192.168.56.101,mod_dl_src:00:00:00:00:00:0a,output:controller
+
+ovs-ofctl add-flow s5 in_port=2,actions=mod_nw_src:192.168.56.101,mod_dl_src:00:00:00:00:00:0a,output:controller
+
+chmod 777 ovs-five-controller
 

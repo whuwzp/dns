@@ -31,11 +31,11 @@ from ryu.lib.packet import udp
 import socket
 import struct
 
-class SimpleSwitch(app_manager.RyuApp):
+class MDNS(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_0.OFP_VERSION]
 
     def __init__(self, *args, **kwargs):
-        super(SimpleSwitch, self).__init__(*args, **kwargs)
+        super(MDNS, self).__init__(*args, **kwargs)
         self.mac_to_port = {}
         self.datapath = None
         self.flag = 0
@@ -60,7 +60,7 @@ class SimpleSwitch(app_manager.RyuApp):
 
         msg = ev.msg
         datapath = msg.datapath
-        print "packet-in from : ",datapath.id
+
         ofproto = datapath.ofproto
         pkt = packet.Packet(msg.data)
         eth = pkt.get_protocol(ethernet.ethernet)
@@ -115,7 +115,9 @@ class SimpleSwitch(app_manager.RyuApp):
                          resp_arcount) = struct.unpack(
                             "!HHHHHH",
                             resp_data[:12])
-                        print "id is ", resp_request_id
+                        print "-----------------------------"
+                        print "response from dns : ", datapath_id
+                        print "transaction_id : ", resp_request_id
                         # DNS header = 12
                         record = resp_data[12:]
                         # 3www.6whuwzp.2cn0(11+4) + 2 + 2 = 19 -> www.example.com 21
@@ -125,20 +127,30 @@ class SimpleSwitch(app_manager.RyuApp):
                                                                                                     record[
                                                                                                     :struct.calcsize(
                                                                                                         "!HHHLHBBBB")])
-                            print "{0}.{1}.{2}.{3}".format(ip1, ip2, ip3, ip4)
+                            print "answer ip : "+"{0}.{1}.{2}.{3}".format(ip1, ip2, ip3, ip4)
 
                             if resp_request_id not in self.reply.keys():
-                                self.reply[resp_request_id] = {datapath_id : ip1 + ip2 + ip3 + ip4}
+                                self.reply[resp_request_id] = {datapath_id : [ip1 , ip2 , ip3 , ip4]}
                             else:
-                                self.reply[resp_request_id][datapath_id] = ip1 + ip2 + ip3 + ip4
+                                self.reply[resp_request_id][datapath_id] = [ip1 , ip2 , ip3 , ip4]
 
 
                         # defualt the dns1 to be attacked
-                        if len(self.reply[resp_request_id]) == 3 :
-                            if self.reply[resp_request_id][2] == self.reply[resp_request_id][3]:
+                        # if len(self.reply[resp_request_id]) == 3 :
+                        #     if self.reply[resp_request_id][2] == self.reply[resp_request_id][3]:
+
+                        # to seave time
+                        if len(self.reply[resp_request_id]) == 2 :
+                            if True:
+
                                 out = datapath.ofproto_parser.OFPPacketOut(
                                     datapath=datapath, buffer_id=msg.buffer_id, in_port=1,
                                     actions=actions, data=data)
+                                print "===================================="
+                                # to save time
+                                # print "final answer : " ,self.reply[resp_request_id][3][0], ".", self.reply[resp_request_id][3][1], ".", self.reply[resp_request_id][3][2], ".", self.reply[resp_request_id][3][3]
+                                print "final answer : " + "{0}.{1}.{2}.{3}".format(ip1, ip2, ip3, ip4)
+                                print "===================================="
                                 datapath.send_msg(out)
 
 
