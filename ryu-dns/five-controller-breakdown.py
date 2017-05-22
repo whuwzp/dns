@@ -31,16 +31,18 @@ from ryu.lib.packet import udp
 import socket
 import struct
 
-class SimpleSwitch(app_manager.RyuApp):
+class MDNS(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_0.OFP_VERSION]
 
     def __init__(self, *args, **kwargs):
-        super(SimpleSwitch, self).__init__(*args, **kwargs)
+        super(MDNS, self).__init__(*args, **kwargs)
         self.mac_to_port = {}
         self.datapath = None
         self.flag = 0
         self.reply = {}
         self.init_time = time.time()
+        self.time = 0
+        self.mum = 0
 
     def add_flow(self, datapath, in_port,  actions):
         ofproto = datapath.ofproto
@@ -60,7 +62,7 @@ class SimpleSwitch(app_manager.RyuApp):
 
         msg = ev.msg
         datapath = msg.datapath
-        # print "-----------------------------"
+
         ofproto = datapath.ofproto
         pkt = packet.Packet(msg.data)
         eth = pkt.get_protocol(ethernet.ethernet)
@@ -74,21 +76,23 @@ class SimpleSwitch(app_manager.RyuApp):
 
 
         # add flow
-        if datapath.id == 4:
+        if datapath.id == 6:
             self.datapath = datapath
 
             # out_port = ofproto.OFPP_FLOOD
 
             if self.flag == 0:
-                actions = [datapath.ofproto_parser.OFPActionOutput(1), datapath.ofproto_parser.OFPActionOutput(2), datapath.ofproto_parser.OFPActionOutput(3) ]
+                actions = [datapath.ofproto_parser.OFPActionOutput(1), datapath.ofproto_parser.OFPActionOutput(2), datapath.ofproto_parser.OFPActionOutput(3), datapath.ofproto_parser.OFPActionOutput(4), datapath.ofproto_parser.OFPActionOutput(5) ]
                 # actions = [datapath.ofproto_parser.OFPActionOutput(out_port)]
                 data = None
-                self.add_flow(datapath, 4,  actions)
+                self.add_flow(datapath, 6,  actions)
 
-                actions = [datapath.ofproto_parser.OFPActionOutput(4)]
+                actions = [datapath.ofproto_parser.OFPActionOutput(6)]
                 self.add_flow(datapath, 1, actions)
                 self.add_flow(datapath, 2, actions)
                 self.add_flow(datapath, 3, actions)
+                self.add_flow(datapath, 4, actions)
+                self.add_flow(datapath, 5, actions)
 
                 self.flag = 1
 
@@ -102,7 +106,7 @@ class SimpleSwitch(app_manager.RyuApp):
 
                 ## hehe
                 datapath = self.datapath
-                actions = [datapath.ofproto_parser.OFPActionOutput(4)]
+                actions = [datapath.ofproto_parser.OFPActionOutput(6)]
 
                 data = None
                 if msg.buffer_id == ofproto.OFP_NO_BUFFER:
@@ -129,13 +133,38 @@ class SimpleSwitch(app_manager.RyuApp):
                                                                                                         "!HHHLHBBBB")])
                             print "answer ip : "+"{0}.{1}.{2}.{3}".format(ip1, ip2, ip3, ip4)
 
-                            out = datapath.ofproto_parser.OFPPacketOut(
+                            if resp_request_id not in self.reply.keys():
+                                self.time = time.time()
+                                self.reply[resp_request_id] = {datapath_id : [ip1 , ip2 , ip3 , ip4]}
+                            else:
+                                self.reply[resp_request_id][datapath_id] = [ip1 , ip2 , ip3 , ip4]
+
+
+                        # defualt the dns1 to be attacked
+                        if len(self.reply[resp_request_id]) == 5 :
+                            if self.reply[resp_request_id][4] == self.reply[resp_request_id][5]:
+
+
+
+                                out = datapath.ofproto_parser.OFPPacketOut(
                                     datapath=datapath, buffer_id=msg.buffer_id, in_port=1,
                                     actions=actions, data=data)
-
-                            datapath.send_msg(out)
-
-
+                                print "===================================="
+                                # print "final answer : " ,self.reply[resp_request_id][3][0], ".", self.reply[resp_request_id][3][1], ".", self.reply[resp_request_id][3][2], ".", self.reply[resp_request_id][3][3]
+                                print "final answer : " + "{0}.{1}.{2}.{3}".format(ip1, ip2, ip3, ip4)
+                                print "===================================="
+                                datapath.send_msg(out)
+                        else:
+                            if time.time() - self.time >= 1:
+                                print "time out"
+                                out = datapath.ofproto_parser.OFPPacketOut(
+                                    datapath=datapath, buffer_id=msg.buffer_id, in_port=1,
+                                    actions=actions, data=data)
+                                print "===================================="
+                                # print "final answer : " ,self.reply[resp_request_id][3][0], ".", self.reply[resp_request_id][3][1], ".", self.reply[resp_request_id][3][2], ".", self.reply[resp_request_id][3][3]
+                                print "final answer : " + "{0}.{1}.{2}.{3}".format(ip1, ip2, ip3, ip4)
+                                print "===================================="
+                                datapath.send_msg(out)
 
 
 

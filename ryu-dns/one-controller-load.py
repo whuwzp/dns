@@ -40,6 +40,8 @@ class SimpleSwitch(app_manager.RyuApp):
         self.datapath = None
         self.flag = 0
         self.reply = {}
+        self.mum = 0
+        self.time = 0
         self.init_time = time.time()
 
     def add_flow(self, datapath, in_port,  actions):
@@ -134,6 +136,29 @@ class SimpleSwitch(app_manager.RyuApp):
                                     actions=actions, data=data)
 
                             datapath.send_msg(out)
+                            self.reply[resp_request_id] = {}
+                            if self.mum == 0:
+                                self.time = time.time()
+                            self.mum += 1
+                            if time.time() - self.time >= 1000:
+                                print "====================================================", self.mum
+                                time.sleep(100000)
+
+
+
+
+
+
+
+
+                                # out = datapath.ofproto_parser.OFPPacketOut(
+                #     datapath=datapath, buffer_id=msg.buffer_id, in_port=1,
+                #     actions=actions, data=data)
+                # datapath.send_msg(out)
+
+                # print "get it"
+
+
 
 
 

@@ -136,12 +136,10 @@ class MDNS(app_manager.RyuApp):
 
 
                         # defualt the dns1 to be attacked
-                        # if len(self.reply[resp_request_id]) == 3 :
-                        #     if self.reply[resp_request_id][2] == self.reply[resp_request_id][3]:
+                        if len(self.reply[resp_request_id]) == 3 :
+                            if self.reply[resp_request_id][2] == self.reply[resp_request_id][3]:
 
-                        # to seave time
-                        if len(self.reply[resp_request_id]) == 2 :
-                            if True:
+
 
                                 out = datapath.ofproto_parser.OFPPacketOut(
                                     datapath=datapath, buffer_id=msg.buffer_id, in_port=1,
