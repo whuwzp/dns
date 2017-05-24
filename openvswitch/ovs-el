@@ -1,0 +1,18 @@
+#! /bin/sh
+echo "start..."
+
+ovs-vsctl add-port s0 vboxnet0
+ovs-vsctl add-port s1 vboxnet1
+ovs-vsctl add-port s2 vboxnet2
+ovs-vsctl add-port s3 vboxnet3
+
+# in
+ovs-ofctl add-flow s1 in_port=1,actions=output:2
+
+ovs-ofctl add-flow s1 in_port=2,actions=output:1
+
+ovs-ofctl add-flow s0 in_port=4,actions=output:1
+
+ovs-ofctl add-flow s0 in_port=1,actions=output:4
+chmod 777 ovs-el
+
