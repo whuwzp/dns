@@ -1,6 +1,1 @@
-MDNS的实现方法：
-mininet拓扑在/mininet文件夹内
-攻击代码在/attack文件夹内
-openvswitch代码在/ovs
-bind配置在/bind内
-ryu控制器的代码在/ryu-dns内
+MDNS的实现代码在attack branch内
