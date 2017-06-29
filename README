@@ -1,2 +1,7 @@
-an implement of dns server with python gevent
-http://www.isnowfy.com/introduction-to-gevent/
+mininet拓扑在/mininet
+ovs命令在/openvswitch
+Ryu实现app在/ryu-dns
+测试MDNS性能python代码在/dns
+实现Kaminsky攻击在/attack
+各虚拟机中DNS配置在/bind
+
